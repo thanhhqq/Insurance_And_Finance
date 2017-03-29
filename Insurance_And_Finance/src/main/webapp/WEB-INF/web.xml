@@ -4,30 +4,4 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
-  <filter>
-  	<filter-name>sdfsdf</filter-name>
-  	<display-name>sdfsdf</display-name>
-  	<description></description>
-  	<filter-class>fdfdfd.sdfsdf</filter-class>
-  </filter>
-  <filter-mapping>
-  	<filter-name>sdfsdf</filter-name>
-  	<url-pattern>/sdfsdf</url-pattern>
-  </filter-mapping>
-  <listener>
-  	<listener-class>fdfdfd.DFDFDF</listener-class>
-  </listener>
-  <listener>
-  	<listener-class>ddddf.ASDASD</listener-class>
-  </listener>
-  <servlet>
-  	<servlet-name>sdsdsd</servlet-name>
-  	<display-name>sdsdsd</display-name>
-  	<description></description>
-  	<servlet-class>sdssd.sdsdsd</servlet-class>
-  </servlet>
-  <servlet-mapping>
-  	<servlet-name>sdsdsd</servlet-name>
-  	<url-pattern>/sdsdsd</url-pattern>
-  </servlet-mapping>
 </web-app>

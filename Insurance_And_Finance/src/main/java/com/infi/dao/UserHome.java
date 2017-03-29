@@ -2,14 +2,14 @@ package com.infi.dao;
 // Generated Mar 27, 2017 11:47:24 PM by Hibernate Tools 5.1.0.Alpha1
 
 import java.util.List;
-import javax.naming.InitialContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 import com.infi.model.User;
-
 import static org.hibernate.criterion.Example.create;
 
 /**
@@ -23,9 +23,10 @@ public class UserHome {
 
 	private final SessionFactory sessionFactory = getSessionFactory();
 
+	@SuppressWarnings("deprecation")
 	protected SessionFactory getSessionFactory() {
 		try {
-			return (SessionFactory) new InitialContext().lookup("SessionFactory");
+			return new Configuration().configure().buildSessionFactory();
 		} catch (Exception e) {
 			log.error("Could not locate SessionFactory in JNDI", e);
 			throw new IllegalStateException("Could not locate SessionFactory in JNDI");
@@ -35,7 +36,7 @@ public class UserHome {
 	public void persist(User transientInstance) {
 		log.debug("persisting User instance");
 		try {
-			sessionFactory.getCurrentSession().persist(transientInstance);
+			sessionFactory.openSession().persist(transientInstance);
 			log.debug("persist successful");
 		} catch (RuntimeException re) {
 			log.error("persist failed", re);
@@ -57,7 +58,7 @@ public class UserHome {
 	public void attachClean(User instance) {
 		log.debug("attaching clean User instance");
 		try {
-			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			sessionFactory.getCurrentSession().lock(instance, LockMode.FORCE);
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -90,8 +91,13 @@ public class UserHome {
 
 	public User findById(java.lang.Integer id) {
 		log.debug("getting User instance with id: " + id);
+		Transaction tx = null;
+		Session session = null;
 		try {
-			User instance = (User) sessionFactory.getCurrentSession().get("com.infi.dao.User", id);
+			session = sessionFactory.openSession();
+			tx = session.beginTransaction();
+			User instance = (User) session.get(User.class, id);
+			tx.commit();
 			if (instance == null) {
 				log.debug("get successful, no instance found");
 			} else {
@@ -101,7 +107,16 @@ public class UserHome {
 		} catch (RuntimeException re) {
 			log.error("get failed", re);
 			throw re;
+		} finally {
+			try {
+				if (session != null) {
+					session.close();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+
 	}
 
 	public List<User> findByExample(User instance) {
